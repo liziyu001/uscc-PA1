@@ -235,24 +235,7 @@ shared_ptr<ASTStmt> Parser::parseStmt()
 shared_ptr<ASTCompoundStmt> Parser::parseCompoundStmt(bool isFuncBody)
 {
 	shared_ptr<ASTCompoundStmt> retVal;
-
-	shared_ptr<ASTDecl> decl;
-
-	shared_ptr<ASTStmt> stmt;
-
-	while ((decl = parseDecl())) {
-		if (!retVal) {
-			retVal = make_shared<ASTCompoundStmt>();
-		}
-		retVal->addDecl(decl);
-	}
 	
-	while ((stmt = parseStmt())) {
-		if (!retVal) {
-			retVal = make_shared<ASTCompoundStmt>();
-		}
-		retVal->addStmt(stmt);
-	}
 	// PA1: Implement
 	
 	return retVal;
