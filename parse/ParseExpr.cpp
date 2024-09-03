@@ -92,7 +92,7 @@ shared_ptr<ASTExpr> Parser::parseAndTerm()
 
 	// PA1: This should not directly check factor
 	// but instead implement the proper grammar rule
-	retVal = parseFactor();
+	retVal = parseValue();
 	
 	return retVal;
 }
@@ -168,6 +168,11 @@ shared_ptr<ASTExpr> Parser::parseValue()
 {
 	shared_ptr<ASTExpr> retVal;
 	
+	if (peekAndConsume(Token::Not)) {
+		retVal = make_shared<ASTNotExpr>(parseFactor());
+	} else {
+		retVal = parseFactor();
+	}
 	// PA1: Implement
 	
 	return retVal;
@@ -189,6 +194,10 @@ shared_ptr<ASTExpr> Parser::parseFactor()
 	else if ((retVal = parseConstantFactor()))
 		;
 	else if ((retVal = parseStringFactor()))
+		;
+	else if ((retVal = parseIncFactor()))
+		;
+	else if ((retVal = parseDecFactor()))
 		;
 	// PA1: Add additional cases
 	
@@ -479,7 +488,16 @@ shared_ptr<ASTExpr> Parser::parseIdentFactor()
 shared_ptr<ASTExpr> Parser::parseIncFactor()
 {
 	shared_ptr<ASTExpr> retVal;
+	Identifier* ident = nullptr;
 	
+	if (peekAndConsume(Token::Inc)) {
+		if (peekToken() == Token::Identifier) {
+			ident = getVariable(getTokenTxt());
+			consumeToken();
+			retVal = make_shared<ASTIncExpr>(*ident);
+		}
+		
+	}
 	// PA1: Implement
 	
 	return retVal;
@@ -489,7 +507,16 @@ shared_ptr<ASTExpr> Parser::parseIncFactor()
 shared_ptr<ASTExpr> Parser::parseDecFactor()
 {
 	shared_ptr<ASTExpr> retVal;
+	Identifier* ident = nullptr;
 	
+	if (peekAndConsume(Token::Dec)) {
+		if (peekToken() == Token::Identifier) {
+			ident = getVariable(getTokenTxt());
+			consumeToken();
+			retVal = make_shared<ASTDecExpr>(*ident);
+		}
+		
+	}
 	// PA1: Implement
 
 	return retVal;
