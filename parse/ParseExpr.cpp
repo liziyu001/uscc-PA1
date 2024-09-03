@@ -182,13 +182,12 @@ shared_ptr<ASTExpr> Parser::parseFactor()
 	// we make sure to consume the mUnusedIdents
 	// before we try any other rules
 	
-	if ((retVal = parseIdentFactor())){
-
-	} else if ((retVal = parseConstantFactor())) {
-
-	} else if ((retVal = parseStringFactor())) {
-
-	}
+	if ((retVal = parseIdentFactor()))
+		;
+	else if ((retVal = parseConstantFactor()))
+		;
+	else if ((retVal = parseStringFactor()))
+		;
 	// PA1: Add additional cases
 	
 	return retVal;
@@ -210,9 +209,9 @@ shared_ptr<ASTConstantExpr> Parser::parseConstantFactor()
 	shared_ptr<ASTConstantExpr> retVal;
 
 	if (peekToken() == Token::Constant) {
-		const char* value = getTokenTxt();
-		consumeToken();
+		const char* value = getTokenTxt();	
 		retVal = make_shared<ASTConstantExpr>(value);
+		consumeToken();
 	}
 	
 	return retVal;
@@ -226,7 +225,7 @@ shared_ptr<ASTStringExpr> Parser::parseStringFactor()
 	if (peekToken() == Token::String) {
 		const char* value = getTokenTxt();
 		consumeToken();
-		retVal = make_shared<ASTStringExpr>(value);
+		retVal = make_shared<ASTStringExpr>(value, mStrings);
 	}
 	
 	return retVal;

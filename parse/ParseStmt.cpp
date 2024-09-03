@@ -195,9 +195,11 @@ shared_ptr<ASTStmt> Parser::parseStmt()
 	{
 		// NOTE: AssignStmt HAS to go before ExprStmt!!
 		// Read comments in AssignStmt for why.
-		if ((retVal = parseCompoundStmt()))
+		if ((retVal = parseReturnStmt()))
 			;
 		else if ((retVal = parseAssignStmt()))
+			;
+		else if ((retVal = parseCompoundStmt()))
 			;
 		// PA1: Add additional cases
 		
@@ -235,6 +237,28 @@ shared_ptr<ASTStmt> Parser::parseStmt()
 shared_ptr<ASTCompoundStmt> Parser::parseCompoundStmt(bool isFuncBody)
 {
 	shared_ptr<ASTCompoundStmt> retVal;
+
+	shared_ptr<ASTDecl> decl;
+
+	shared_ptr<ASTStmt> stmt;
+
+	if (peekAndConsume(Token::LBrace)) {
+		while ((decl = parseDecl())) {
+			if (!retVal) {
+				retVal = make_shared<ASTCompoundStmt>();
+			}
+			retVal->addDecl(decl);
+		}
+		
+		while ((stmt = parseStmt())) {
+			if (!retVal) {
+				retVal = make_shared<ASTCompoundStmt>();
+			}
+			retVal->addStmt(stmt);
+		}
+		matchToken(Token::RBrace);
+	}
+
 	
 	// PA1: Implement
 	
@@ -380,7 +404,12 @@ shared_ptr<ASTReturnStmt> Parser::parseReturnStmt()
 {
 	shared_ptr<ASTReturnStmt> retVal;
 	
+	if (peekAndConsume(Token::Key_return)) {
 
+		shared_ptr<ASTExpr> expr = parseExpr();
+		retVal = make_shared<ASTReturnStmt>(expr);
+		matchToken(Token::SemiColon);
+	}
 
 	// PA1: Implement
 	
