@@ -243,17 +243,12 @@ shared_ptr<ASTCompoundStmt> Parser::parseCompoundStmt(bool isFuncBody)
 	shared_ptr<ASTStmt> stmt;
 
 	if (peekAndConsume(Token::LBrace)) {
+		retVal = make_shared<ASTCompoundStmt>();
 		while ((decl = parseDecl())) {
-			if (!retVal) {
-				retVal = make_shared<ASTCompoundStmt>();
-			}
 			retVal->addDecl(decl);
 		}
 		
 		while ((stmt = parseStmt())) {
-			if (!retVal) {
-				retVal = make_shared<ASTCompoundStmt>();
-			}
 			retVal->addStmt(stmt);
 		}
 		matchToken(Token::RBrace);
