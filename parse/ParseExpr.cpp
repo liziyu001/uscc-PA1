@@ -184,6 +184,8 @@ shared_ptr<ASTExpr> Parser::parseFactor()
 	
 	if ((retVal = parseIdentFactor()))
 		;
+	else if ((retVal = parseParenFactor()))
+		;
 	else if ((retVal = parseConstantFactor()))
 		;
 	else if ((retVal = parseStringFactor()))
@@ -198,6 +200,10 @@ shared_ptr<ASTExpr> Parser::parseParenFactor()
 {
 	shared_ptr<ASTExpr> retVal;
 
+	if (peekAndConsume(Token::LParen)) {
+		retVal = parseExpr();
+		matchToken(Token::RParen);
+	}
 	// PA1: Implement
 	
 	return retVal;
@@ -224,8 +230,8 @@ shared_ptr<ASTStringExpr> Parser::parseStringFactor()
 
 	if (peekToken() == Token::String) {
 		const char* value = getTokenTxt();
-		consumeToken();
 		retVal = make_shared<ASTStringExpr>(value, mStrings);
+		consumeToken();
 	}
 	
 	return retVal;
