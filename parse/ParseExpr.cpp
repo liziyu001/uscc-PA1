@@ -92,7 +92,18 @@ shared_ptr<ASTExpr> Parser::parseAndTerm()
 
 	// PA1: This should not directly check factor
 	// but instead implement the proper grammar rule
-	retVal = parseRelExpr();
+	shared_ptr<ASTExpr> relExpr = parseRelExpr();
+	
+	if (relExpr)
+	{
+		retVal = relExpr;
+		shared_ptr<ASTLogicalAnd> andTermPrime = parseAndTermPrime(retVal);
+		
+		if (andTermPrime)
+		{
+			retVal = andTermPrime;
+		}
+	}
 	
 	return retVal;
 }
@@ -101,6 +112,29 @@ shared_ptr<ASTLogicalAnd> Parser::parseAndTermPrime(shared_ptr<ASTExpr> lhs)
 {
 	shared_ptr<ASTLogicalAnd> retVal;
 
+	Token::Tokens op = peekToken();
+	if (op == Token::And)
+	{
+		retVal = make_shared<ASTLogicalAnd>();
+		consumeToken();
+		
+		// Set the lhs to our parameter
+		retVal->setLHS(lhs);
+		
+		shared_ptr<ASTExpr> rhs = parseRelExpr();
+		if (!rhs)
+		{
+			throw OperandMissing(op);
+		}
+		
+		retVal->setRHS(rhs);
+		
+		shared_ptr<ASTLogicalAnd> andTermPrime = parseAndTermPrime(retVal);
+		if (andTermPrime)
+		{
+			retVal = andTermPrime;
+		}
+	}
 	// PA1: Implement
 	
 	return retVal;
