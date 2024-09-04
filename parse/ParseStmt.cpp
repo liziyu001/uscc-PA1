@@ -199,10 +199,11 @@ shared_ptr<ASTStmt> Parser::parseStmt()
 			;
 		else if ((retVal = parseAssignStmt()))
 			;
+		else if ((retVal = parseWhileStmt()))
+			;
 		else if ((retVal = parseCompoundStmt()))
 			;
 		// PA1: Add additional cases
-		
 		else if (peekIsOneOf({Token::Key_int, Token::Key_char}))
 		{
 			throw ParseExceptMsg("Declarations are only allowed at the beginning of a scope block");
@@ -389,7 +390,16 @@ shared_ptr<ASTIfStmt> Parser::parseIfStmt()
 shared_ptr<ASTWhileStmt> Parser::parseWhileStmt()
 {
 	shared_ptr<ASTWhileStmt> retVal;
+	shared_ptr<ASTStmt> stmt;
+	shared_ptr<ASTExpr> expr;
 	
+	if (peekToken() == Token::Key_while) {
+		matchTokenSeq({Token::Key_while, Token::LParen});
+		expr = parseExpr();
+		matchToken(Token::RParen);
+		stmt = parseStmt();
+		retVal = make_shared<ASTWhileStmt>(expr, stmt);
+	}
 	// PA1: Implement
 	
 	return retVal;
