@@ -92,7 +92,7 @@ shared_ptr<ASTExpr> Parser::parseAndTerm()
 
 	// PA1: This should not directly check factor
 	// but instead implement the proper grammar rule
-	retVal = parseValue();
+	retVal = parseTerm();
 	
 	return retVal;
 }
@@ -149,6 +149,20 @@ shared_ptr<ASTExpr> Parser::parseTerm()
 {
 	shared_ptr<ASTExpr> retVal;
 
+	shared_ptr<ASTExpr> value = parseValue();
+	
+	if (value)
+	{
+		retVal = value;
+		// Check if this is followed by an op (optional)
+		shared_ptr<ASTBinaryMathOp> termPrime = parseTermPrime(retVal);
+		
+		if (termPrime)
+		{
+			// If we got a exprPrime, return this instead of just term
+			retVal = termPrime;
+		}
+	}
 	// PA1: Implement
 	
 	return retVal;
@@ -158,6 +172,32 @@ shared_ptr<ASTBinaryMathOp> Parser::parseTermPrime(shared_ptr<ASTExpr> lhs)
 {
 	shared_ptr<ASTBinaryMathOp> retVal;
 
+	Token::Tokens op = peekToken();
+	if (op == Token::Mult || op == Token::Div || op == Token::Mod)
+	{
+		retVal = make_shared<ASTBinaryMathOp>(op);
+		consumeToken();
+		
+		// Set the lhs to our parameter
+		retVal->setLHS(lhs);
+		
+		// We MUST get a Term as the RHS of this operand
+		shared_ptr<ASTExpr> rhs = parseValue();
+		if (!rhs)
+		{
+			throw OperandMissing(op);
+		}
+		
+		retVal->setRHS(rhs);
+		
+		// PA2: Finalize op
+		
+		shared_ptr<ASTBinaryMathOp> termPrime = parseTermPrime(retVal);
+		if (termPrime)
+		{
+			retVal = termPrime;
+		}
+	}
 	// PA1: Implement
 	
 	return retVal;
