@@ -92,7 +92,7 @@ shared_ptr<ASTExpr> Parser::parseAndTerm()
 
 	// PA1: This should not directly check factor
 	// but instead implement the proper grammar rule
-	retVal = parseNumExpr();
+	retVal = parseRelExpr();
 	
 	return retVal;
 }
@@ -110,7 +110,19 @@ shared_ptr<ASTLogicalAnd> Parser::parseAndTermPrime(shared_ptr<ASTExpr> lhs)
 shared_ptr<ASTExpr> Parser::parseRelExpr()
 {
 	shared_ptr<ASTExpr> retVal;
-
+	
+	shared_ptr<ASTExpr> numExpr = parseNumExpr();
+	
+	if (numExpr)
+	{
+		retVal = numExpr;
+		shared_ptr<ASTBinaryCmpOp> relExprPrime = parseRelExprPrime(retVal);
+		
+		if (relExprPrime)
+		{
+			retVal = relExprPrime;
+		}
+	}
 	// PA1: Implement
 	
 	return retVal;
@@ -120,6 +132,29 @@ shared_ptr<ASTBinaryCmpOp> Parser::parseRelExprPrime(shared_ptr<ASTExpr> lhs)
 {
 	shared_ptr<ASTBinaryCmpOp> retVal;
 	
+	Token::Tokens op = peekToken();
+	if (op == Token::EqualTo || op == Token::NotEqual || op == Token::LessThan || op == Token::GreaterThan)
+	{
+		retVal = make_shared<ASTBinaryCmpOp>(op);
+		consumeToken();
+		
+		// Set the lhs to our parameter
+		retVal->setLHS(lhs);
+		
+		shared_ptr<ASTExpr> rhs = parseNumExpr();
+		if (!rhs)
+		{
+			throw OperandMissing(op);
+		}
+		
+		retVal->setRHS(rhs);
+		
+		shared_ptr<ASTBinaryCmpOp> relExprPrime = parseRelExprPrime(retVal);
+		if (relExprPrime)
+		{
+			retVal = relExprPrime;
+		}
+	}
 	// PA1: Implement
 	
 	return retVal;
