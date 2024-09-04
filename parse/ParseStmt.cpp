@@ -203,6 +203,10 @@ shared_ptr<ASTStmt> Parser::parseStmt()
 			;
 		else if ((retVal = parseCompoundStmt()))
 			;
+		else if ((retVal = parseExprStmt()))
+			;
+		else if ((retVal = parseNullStmt()))
+			;
 		// PA1: Add additional cases
 		else if (peekIsOneOf({Token::Key_int, Token::Key_char}))
 		{
@@ -424,7 +428,12 @@ shared_ptr<ASTReturnStmt> Parser::parseReturnStmt()
 shared_ptr<ASTExprStmt> Parser::parseExprStmt()
 {
 	shared_ptr<ASTExprStmt> retVal;
-	
+	shared_ptr<ASTExpr> expr;
+
+	if((expr = parseExpr())) {
+		retVal = make_shared<ASTExprStmt>(expr);
+		matchToken(Token::SemiColon);
+	};
 	// PA1: Implement
 	
 	return retVal;
@@ -433,6 +442,10 @@ shared_ptr<ASTExprStmt> Parser::parseExprStmt()
 shared_ptr<ASTNullStmt> Parser::parseNullStmt()
 {
 	shared_ptr<ASTNullStmt> retVal;
+	
+	if (peekAndConsume(Token::SemiColon)) {
+		retVal = make_shared<ASTNullStmt>();
+	}
 	
 	// PA1: Implement
 	
