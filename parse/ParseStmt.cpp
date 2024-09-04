@@ -199,6 +199,8 @@ shared_ptr<ASTStmt> Parser::parseStmt()
 			;
 		else if ((retVal = parseAssignStmt()))
 			;
+		else if ((retVal = parseIfStmt()))
+			;
 		else if ((retVal = parseWhileStmt()))
 			;
 		else if ((retVal = parseCompoundStmt()))
@@ -385,7 +387,24 @@ shared_ptr<ASTStmt> Parser::parseAssignStmt()
 shared_ptr<ASTIfStmt> Parser::parseIfStmt()
 {
 	shared_ptr<ASTIfStmt> retVal;
+	shared_ptr<ASTStmt> stmt;
+	shared_ptr<ASTStmt> elseStmt;
+	shared_ptr<ASTExpr> expr;
 	
+	if (peekToken() == Token::Key_if) {
+		matchTokenSeq({Token::Key_if, Token::LParen});
+		expr = parseExpr();
+		if (!expr) {
+			throw ParseExceptMsg("Invalid condition for if statement");
+		}
+		matchToken(Token::RParen);
+		stmt = parseStmt();
+		if (peekAndConsume(Token::Key_else)) {
+			elseStmt = parseStmt();
+		}
+
+		retVal = make_shared<ASTIfStmt>(expr, stmt, elseStmt);
+	}
 	// PA1: Implement
 	
 	return retVal;
@@ -400,6 +419,9 @@ shared_ptr<ASTWhileStmt> Parser::parseWhileStmt()
 	if (peekToken() == Token::Key_while) {
 		matchTokenSeq({Token::Key_while, Token::LParen});
 		expr = parseExpr();
+		if (!expr) {
+			throw ParseExceptMsg("Invalid condition for while statement");
+		}
 		matchToken(Token::RParen);
 		stmt = parseStmt();
 		retVal = make_shared<ASTWhileStmt>(expr, stmt);

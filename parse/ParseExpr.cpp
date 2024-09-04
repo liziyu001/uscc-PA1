@@ -353,6 +353,9 @@ shared_ptr<ASTExpr> Parser::parseParenFactor()
 
 	if (peekAndConsume(Token::LParen)) {
 		retVal = parseExpr();
+		if (!retVal) {
+			throw ParseExceptMsg("Not a valid expression inside parenthesis");
+		}
 		matchToken(Token::RParen);
 	}
 	// PA1: Implement
