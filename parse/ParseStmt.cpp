@@ -455,7 +455,7 @@ shared_ptr<ASTExprStmt> Parser::parseExprStmt()
 	if((expr = parseExpr())) {
 		retVal = make_shared<ASTExprStmt>(expr);
 		matchToken(Token::SemiColon);
-	};
+	}
 	// PA1: Implement
 	
 	return retVal;

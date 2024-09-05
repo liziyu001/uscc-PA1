@@ -309,9 +309,14 @@ shared_ptr<ASTBinaryMathOp> Parser::parseTermPrime(shared_ptr<ASTExpr> lhs)
 shared_ptr<ASTExpr> Parser::parseValue()
 {
 	shared_ptr<ASTExpr> retVal;
+	shared_ptr<ASTExpr> factor;
 	
 	if (peekAndConsume(Token::Not)) {
-		retVal = make_shared<ASTNotExpr>(parseFactor());
+		factor = parseFactor();
+		if (!factor) {
+			throw ParseExceptMsg("! must be followed by an expression.");
+		}
+		retVal = make_shared<ASTNotExpr>(factor);
 	} else {
 		retVal = parseFactor();
 	}
@@ -328,8 +333,9 @@ shared_ptr<ASTExpr> Parser::parseFactor()
 	// Try parse identifier factors FIRST so
 	// we make sure to consume the mUnusedIdents
 	// before we try any other rules
-	
 	if ((retVal = parseIdentFactor()))
+		;
+	else if ((retVal = parseAddrOfArrayFactor()))
 		;
 	else if ((retVal = parseParenFactor()))
 		;
@@ -671,7 +677,25 @@ shared_ptr<ASTExpr> Parser::parseDecFactor()
 shared_ptr<ASTExpr> Parser::parseAddrOfArrayFactor()
 {
 	shared_ptr<ASTExpr> retVal;
+	shared_ptr<ASTExpr> expr;
+	shared_ptr<ASTArraySub> arraySub;
+	Identifier* ident = nullptr;
 	
+	if (peekAndConsume(Token::Addr)) {
+		if (peekToken() == Token::Identifier) {
+			ident = getVariable(getTokenTxt());
+			consumeToken();
+			matchToken(Token::LBracket);
+			expr = parseExpr();
+			if (!expr) {
+				throw ParseExceptMsg("Missing required subscript expression.");
+			}
+			matchToken(Token::RBracket);
+			retVal = make_shared<ASTAddrOfArray>(make_shared<ASTArraySub>(*ident, expr));
+		} else {
+			throw ParseExceptMsg("& must be followed by an identifier.");
+		}
+	}
 	// PA1: Implement
 	
 	return retVal;
