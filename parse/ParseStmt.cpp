@@ -209,7 +209,6 @@ shared_ptr<ASTStmt> Parser::parseStmt()
 			;
 		else if ((retVal = parseNullStmt()))
 			;
-		// PA1: Add additional cases
 		else if (peekIsOneOf({Token::Key_int, Token::Key_char}))
 		{
 			throw ParseExceptMsg("Declarations are only allowed at the beginning of a scope block");
@@ -262,7 +261,6 @@ shared_ptr<ASTCompoundStmt> Parser::parseCompoundStmt(bool isFuncBody)
 	}
 
 	
-	// PA1: Implement
 	
 	return retVal;
 }
@@ -405,7 +403,6 @@ shared_ptr<ASTIfStmt> Parser::parseIfStmt()
 
 		retVal = make_shared<ASTIfStmt>(expr, stmt, elseStmt);
 	}
-	// PA1: Implement
 	
 	return retVal;
 }
@@ -426,7 +423,6 @@ shared_ptr<ASTWhileStmt> Parser::parseWhileStmt()
 		stmt = parseStmt();
 		retVal = make_shared<ASTWhileStmt>(expr, stmt);
 	}
-	// PA1: Implement
 	
 	return retVal;
 }
@@ -434,15 +430,14 @@ shared_ptr<ASTWhileStmt> Parser::parseWhileStmt()
 shared_ptr<ASTReturnStmt> Parser::parseReturnStmt()
 {
 	shared_ptr<ASTReturnStmt> retVal;
+	shared_ptr<ASTExpr> expr;
 	
 	if (peekAndConsume(Token::Key_return)) {
 
-		shared_ptr<ASTExpr> expr = parseExpr();
+		expr = parseExpr();
 		retVal = make_shared<ASTReturnStmt>(expr);
 		matchToken(Token::SemiColon);
 	}
-
-	// PA1: Implement
 	
 	return retVal;
 }
@@ -456,7 +451,6 @@ shared_ptr<ASTExprStmt> Parser::parseExprStmt()
 		retVal = make_shared<ASTExprStmt>(expr);
 		matchToken(Token::SemiColon);
 	}
-	// PA1: Implement
 	
 	return retVal;
 }
@@ -468,8 +462,6 @@ shared_ptr<ASTNullStmt> Parser::parseNullStmt()
 	if (peekAndConsume(Token::SemiColon)) {
 		retVal = make_shared<ASTNullStmt>();
 	}
-	
-	// PA1: Implement
 	
 	return retVal;
 }

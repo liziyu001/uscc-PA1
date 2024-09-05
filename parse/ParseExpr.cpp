@@ -90,8 +90,6 @@ shared_ptr<ASTExpr> Parser::parseAndTerm()
 {
 	shared_ptr<ASTExpr> retVal;
 
-	// PA1: This should not directly check factor
-	// but instead implement the proper grammar rule
 	shared_ptr<ASTExpr> relExpr = parseRelExpr();
 	
 	if (relExpr)
@@ -135,7 +133,6 @@ shared_ptr<ASTLogicalAnd> Parser::parseAndTermPrime(shared_ptr<ASTExpr> lhs)
 			retVal = andTermPrime;
 		}
 	}
-	// PA1: Implement
 	
 	return retVal;
 }
@@ -157,7 +154,6 @@ shared_ptr<ASTExpr> Parser::parseRelExpr()
 			retVal = relExprPrime;
 		}
 	}
-	// PA1: Implement
 	
 	return retVal;
 }
@@ -189,7 +185,6 @@ shared_ptr<ASTBinaryCmpOp> Parser::parseRelExprPrime(shared_ptr<ASTExpr> lhs)
 			retVal = relExprPrime;
 		}
 	}
-	// PA1: Implement
 	
 	return retVal;
 }
@@ -211,7 +206,6 @@ shared_ptr<ASTExpr> Parser::parseNumExpr()
 			retVal = numExprPrime;
 		}
 	}
-	// PA1: Implement
 	
 	return retVal;
 }
@@ -243,7 +237,6 @@ shared_ptr<ASTBinaryMathOp> Parser::parseNumExprPrime(shared_ptr<ASTExpr> lhs)
 			retVal = numExprPrime;
 		}
 	}
-	// PA1: Implement
 	
 	return retVal;
 }
@@ -263,11 +256,9 @@ shared_ptr<ASTExpr> Parser::parseTerm()
 		
 		if (termPrime)
 		{
-			// If we got a exprPrime, return this instead of just term
 			retVal = termPrime;
 		}
 	}
-	// PA1: Implement
 	
 	return retVal;
 }
@@ -300,7 +291,6 @@ shared_ptr<ASTBinaryMathOp> Parser::parseTermPrime(shared_ptr<ASTExpr> lhs)
 			retVal = termPrime;
 		}
 	}
-	// PA1: Implement
 	
 	return retVal;
 }
@@ -320,7 +310,6 @@ shared_ptr<ASTExpr> Parser::parseValue()
 	} else {
 		retVal = parseFactor();
 	}
-	// PA1: Implement
 	
 	return retVal;
 }
@@ -347,7 +336,6 @@ shared_ptr<ASTExpr> Parser::parseFactor()
 		;
 	else if ((retVal = parseDecFactor()))
 		;
-	// PA1: Add additional cases
 	
 	return retVal;
 }
@@ -364,7 +352,6 @@ shared_ptr<ASTExpr> Parser::parseParenFactor()
 		}
 		matchToken(Token::RParen);
 	}
-	// PA1: Implement
 	
 	return retVal;
 }
@@ -649,7 +636,6 @@ shared_ptr<ASTExpr> Parser::parseIncFactor()
 		}
 		
 	}
-	// PA1: Implement
 	
 	return retVal;
 }
@@ -668,7 +654,6 @@ shared_ptr<ASTExpr> Parser::parseDecFactor()
 		}
 		
 	}
-	// PA1: Implement
 
 	return retVal;
 }
@@ -696,7 +681,6 @@ shared_ptr<ASTExpr> Parser::parseAddrOfArrayFactor()
 			throw ParseExceptMsg("& must be followed by an identifier.");
 		}
 	}
-	// PA1: Implement
 	
 	return retVal;
 }
